@@ -1,5 +1,77 @@
 -- Tidal Club Tempo Challenge
 
-d1 $ s "super808"
+setcps (144/60/4)
+
+-- Part #1
+do
+  let mx = [1, 1, 1, 1]
+  d1
+    $ every 8 (linger 0.25)
+    $ whenmod 9 7 (spin 4)
+    $ every 5 (rev)
+    $ struct "[t ~!2 t?] [t? <t t> ~ t?] <t ~> [t ~!2 <t ~>]"
+    $ s "kick"
+      # pF "feedback" "[0.2 0.5 0.7 0.9(3, 8)]/2"
+      # shape "[0.6 0 0.3]/2"
+      # sustain 0.75
+      |* gain 1
+      |* gain (mx!!0)
+      # shape 0.2
+      # cps (144/60/4)
+  d2
+    $ jux rev
+    $ struct "t([11|13|15], 16, [0 1 2 3]/5)"
+    $ n "<e3!2 a3 g3>"
+      # s "soshats"
+      # pitch1 "[35 45 50 60]/3"
+      # shape 0.2
+      # room 0.1 # sz 0.1
+      |* gain 0.9
+      |* gain (mx!!1)
+  d3
+    $ whenmod 16 12 ((degradeBy "<0.1 0.2 0.4 0.1>") . (fast "<8 16>/2") . (0.5 <~))
+    $ s "~ sd:15"
+      # room 0.05 # sz 0.8
+      # shape 0.4
+      |* gain (mx!!2)
+  d4
+    $ swing 2
+    $ n "e2" + (scale "minor" ("0 4 5 6 7 6 5 4" + "<0!4 4!2 0!2 5 4 0 5>"))
+      # s "supertron"
+      |* gain 0.6
+      |* gain (mx!!3)
+      # voice 0.2
+      # shape 0.2
+      # room 0.1 # sz 0.5
+      # lpf (rangex 500 3500 $ slow 4 $ rand + sine)
+      # lpq (range 0 0.3 $ rand + sine)
+
+-- Part #2
+setcps (72/60/4)
+
+do
+  xfadeIn 1 4 $ silence
+  xfadeIn 2 4 $ silence
+  interpolateIn 3 4 $ loopAt 8 $ striate 32 $ s "bassloop" # cut 1 # shape 0.2 # cps (72/60/4)
+  xfadeIn 4 4 $ silence
+
+do
+  d1
+    $ s "kick"
+      # n "e2"
+      # sustain 4
+      # shape 0.5
+      # pF "feedback" 0.9
+      # accelerate 64
+      # speed 0.005
+      # lpf 2000
+  d2
+    $ s "~ sn:2"
+      # room 0.2
+      # sz 0.8
+  d3
+    $ loopAt 8 $ striate 32 $ s "bassloop"
+      # cut "-1"
+      # shape 0.2
 
 hush
